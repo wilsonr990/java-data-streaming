@@ -2,7 +2,7 @@ server:
   port: 9090
 spring:
   application:
-    name: product
+    name: java-data-streaming
 logging:
   level:
     root: INFO

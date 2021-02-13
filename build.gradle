@@ -38,22 +38,6 @@ jacocoTestReport {
 	reports {
 		xml.enabled true
 	}
-	doLast {
-		def reportFile = project.file("${jacoco.reportsDir}/test/jacocoTestReport.xml")
-		def parser = new XmlParser()
-		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
-		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-		def xml = parser.parse(reportFile)
-		def counter = xml.counter.find { (it.'@type' == 'INSTRUCTION') }
-
-		def covered = counter.'@covered' as Double
-		def missed = counter.'@missed' as Double
-		def percentage = ((covered / (covered + missed)) * 100).round(2)
-
-		printf "Missed %.0f branches%n", missed
-		printf "Covered %.0f branches%n", covered
-		printf "Total %.0f%%%n", percentage
-	}
 }
 
 jacocoTestCoverageVerification {
