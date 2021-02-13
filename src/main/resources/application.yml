@@ -1,0 +1,10 @@
+server:
+  port: ${port:8080}
+spring:
+  application:
+    name: java-data-streaming
+logging:
+  level:
+    root: INFO
+    org.springframework: ${log_level_spring:ERROR}
+    com.alefeducation: ${log_level_alefeducation:ERROR}

@@ -1,0 +1,79 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'jacoco'
+	id 'checkstyle'
+}
+
+group = 'javastreaming'
+version = '1.0.0'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+dependencies {
+	compileOnly 'org.springdoc:springdoc-openapi-webflux-ui:1.4.4'
+
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+	dependsOn test
+	finalizedBy jacocoTestCoverageVerification
+	reports {
+		xml.enabled true
+	}
+	doLast {
+		def reportFile = project.file("${jacoco.reportsDir}/test/jacocoTestReport.xml")
+		def parser = new XmlParser()
+		parser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
+		parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+		def xml = parser.parse(reportFile)
+		def counter = xml.counter.find { (it.'@type' == 'INSTRUCTION') }
+
+		def covered = counter.'@covered' as Double
+		def missed = counter.'@missed' as Double
+		def percentage = ((covered / (covered + missed)) * 100).round(2)
+
+		printf "Missed %.0f branches%n", missed
+		printf "Covered %.0f branches%n", covered
+		printf "Total %.0f%%%n", percentage
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 1.0
+			}
+		}
+	}
+}
+
+checkstyle {
+	toolVersion "7.6.1"
+}
+
+checkstyleMain {
+	source ='src/main/java'
+}
+
+checkstyleTest {
+	source ='src/test/java'
+}

@@ -1,0 +1,10 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: product
+logging:
+  level:
+    root: INFO
+    org.springframework: ${log_level_spring:ERROR}
+    com.alefeducation: ${log_level_alefeducation:ERROR}
